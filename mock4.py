@@ -229,7 +229,7 @@ def test_mock4(n_game, agent1, agent2):
   print("* A1 = {}".format(agent1))
   print("* A2 = {}".format(agent2))
   for gi in range(n_game):
-    game = Connect4()
+    game = Mock4()
     result = game.play(agent1, agent2, p_msg=False, p_res=False)
     if result == 1: w1 += 1
     elif result == 2: w2 += 1
