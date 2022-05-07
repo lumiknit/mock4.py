@@ -35,6 +35,11 @@ class Mock4:
         return z + i
     return None
 
+  def undo(self):
+    if len(self.history) > 0:
+      self.board[self.history[-1]] = 0
+      del self.history[-1]
+
   def check_win(self):
     # Vertical
     for i in range(self.w):
@@ -217,3 +222,20 @@ def agent_greedy(game):
         maxv = acc
         maxc = c
   return maxc
+
+def test_mock4(n_game, agent1, agent2):
+  w1, w2 = 0, 0 
+  print("** Test")
+  print("* A1 = {}".format(agent1))
+  print("* A2 = {}".format(agent2))
+  for gi in range(n_game):
+    game = Connect4()
+    result = game.play(agent1, agent2, p_msg=False, p_res=False)
+    if result == 1: w1 += 1
+    elif result == 2: w2 += 1
+  print("Total = {} games".format(n_game))
+  print("W1 {} ({:.3f}) / Dr {} ({:.3f}) / W2 {} ({:.3f})".format(
+      w1, w1 / n_game,
+      (n_game - w1 - w2), (n_game - w1 - w2) / n_game,
+      w2, w2 / n_game
+  ))
