@@ -1,3 +1,5 @@
+import numpy as np
+
 class Mock4:
   def __init__(self, other=None):
     self.w = 7
@@ -83,7 +85,6 @@ class Mock4:
     return None
   
   def play(self, agent1=None, agent2=None, rand_first=True, p_msg=True, p_res=True):
-    import numpy as np
     def agent_user(game):
       while True:
         try:
@@ -150,8 +151,37 @@ class Mock4:
         z[i] = False
     return z
 
+  def plot(self):
+    import matplotlib.pyplot as plt
+    fonts = [
+      {'weight': 'bold', 'size': 20, 'color': 'white'},
+      {'weight': 'bold', 'size': 20, 'color': 'black'},
+    ]
+    colors = ['black', 'white']
+    plt.figure(figsize=(self.w, self.h))
+    plt.axis('off')
+    for i in range(1, self.h + 1):
+      plt.plot([1, self.w], [i, i], zorder=1.0, c = '0.5')
+    for i in range(1, self.w + 1):
+      plt.plot([i, i], [1, self.h], zorder=1.0, c = '0.5')
+    for i, p in enumerate(self.history):
+      x = 1 + p // self.h
+      y = 1 + p % self.h
+      lbl = str(i + 1)
+      fnt = fonts[i % 2]
+      plt.gcf().gca().add_patch(
+          plt.Circle(
+            (x, y), 0.46, zorder=2.0,
+            color=colors[i % 2], fill=True))
+      plt.gcf().gca().add_patch(
+          plt.Circle(
+            (x, y), 0.46, zorder=2.0,
+            color='black', fill=False))
+      plt.text(
+          x, y, lbl, zorder=3.0,
+          ha='center', va='center', fontdict=fnt)
+
 def agent_random(game):
-  import numpy as np
   a = []
   for i in range(game.w):
     if game.board[(i + 1) * game.h - 1] == 0:
@@ -159,8 +189,7 @@ def agent_random(game):
   if len(a) == 0: return None
   return a[np.random.randint(len(a))]
 
-def agent_greedy(game):
-  import numpy as np
+def policy_greedy_connect(game):
   def read(r, c, dr, dc):
     a = [3, 0, 0, 3, 0]
     r, c = r + dr, c + dc
@@ -205,6 +234,7 @@ def agent_greedy(game):
   drs = [1, 0, 1, 1]
   dcs = [1, 1, 0, -1]
   maxc, maxv = None, -100
+  score = np.zeros(game.w)
   for c in range(game.w):
     acc = 0
     if game.board[(1 + c) * game.h - 1] == 0:
@@ -218,12 +248,17 @@ def agent_greedy(game):
           x = left(b)
           v = value(x)
           acc += v
-      acc -= abs(c - game.w // 2) * 0.1
+      acc += 2 - abs(c - game.w // 2) * 0.1
       acc += np.random.uniform() * 0.1
+      score[c] = acc / 0x05000
       if acc > maxv:
         maxv = acc
         maxc = c
-  return maxc
+  return score
+
+def agent_greedy(game):
+  score = policy_greedy_connect(game)
+  return np.argmax(score)
 
 def test_mock4(n_game, agent1, agent2):
   w1, w2 = 0, 0 
