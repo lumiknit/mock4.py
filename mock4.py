@@ -85,6 +85,9 @@ class Mock4:
     return None
   
   def play(self, agent1=None, agent2=None, rand_first=True, p_msg=True, p_res=True):
+    def agent_name(agent):
+      if hasattr(agent, 'name'): return agent.name
+      else: return str(agent)
     def agent_user(game):
       while True:
         try:
@@ -93,13 +96,14 @@ class Mock4:
           for j in range(game.h):
             if self.board[i * self.h + j] == 0: return i
         except: pass
+    agent_user.name = "user"
     if agent1 is None: agent1 = agent_user
     if agent2 is None: agent2 = agent_user
     order = np.random.randint(2)
     if order == 0: agents = [None, agent1, agent2]
     else: agents = [None, agent2, agent1]
     if p_msg:
-      print("* {} First.".format(agents[1]))
+      print("* {} First.".format(agent_name(agents[1])))
     while True:
       result = self.check_win()
       if result is not None: break
@@ -112,7 +116,7 @@ class Mock4:
       print("-----------------")
       print(self)
       if result == 0: print("Draw")
-      else: print("{}P Win ({})".format(result, agents[result]))
+      else: print("{}P Win ({})".format(result, agent_name(agents[result])))
     if result != 0: result = 1 + (result + order + 1) % 2
     return result
 
@@ -188,6 +192,7 @@ def agent_random(game):
       a.append(i)
   if len(a) == 0: return None
   return a[np.random.randint(len(a))]
+agent_random.name = 'random'
 
 def policy_greedy_connect(game):
   def read(r, c, dr, dc):
@@ -259,6 +264,7 @@ def policy_greedy_connect(game):
 def agent_greedy(game):
   score = policy_greedy_connect(game)
   return np.argmax(score)
+agent_greedy.name = 'greedy'
 
 def test_mock4(n_game, agent1, agent2):
   w1, w2 = 0, 0 
