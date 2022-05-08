@@ -101,7 +101,7 @@ class Mock4:
     agent_user.name = "user"
     if agent1 is None: agent1 = agent_user
     if agent2 is None: agent2 = agent_user
-    order = np.random.randint(2)
+    order = np.random.randint(2) if rand_first else 0
     if order == 0: agents = [None, agent1, agent2]
     else: agents = [None, agent2, agent1]
     if p_msg:
