@@ -37,8 +37,10 @@ class Mock4:
 
   def undo(self):
     if len(self.history) > 0:
-      self.board[self.history[-1]] = 0
+      last_pos = self.history[-1]
+      self.board[last_pos] = 0
       del self.history[-1]
+      return last_pos
 
   def check_win(self):
     # Vertical
