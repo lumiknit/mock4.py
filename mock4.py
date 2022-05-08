@@ -46,6 +46,7 @@ class Mock4:
       last_pos = self.history[-1]
       self.board[last_pos] = 0
       del self.history[-1]
+      self.player = 3 - self.player
       return last_pos
 
   def check_win(self):
