@@ -1,5 +1,9 @@
 import numpy as np
 
+def agent_name(agent):
+  if hasattr(agent, 'name'): return agent.name
+  else: return str(agent)
+
 class Mock4:
   def __init__(self, other=None):
     self.w = 7
@@ -85,9 +89,6 @@ class Mock4:
     return None
   
   def play(self, agent1=None, agent2=None, rand_first=True, p_msg=True, p_res=True):
-    def agent_name(agent):
-      if hasattr(agent, 'name'): return agent.name
-      else: return str(agent)
     def agent_user(game):
       while True:
         try:
@@ -269,8 +270,8 @@ agent_greedy.name = 'greedy'
 def test_mock4(n_game, agent1, agent2):
   w1, w2 = 0, 0 
   print("** Test")
-  print("* A1 = {}".format(agent1))
-  print("* A2 = {}".format(agent2))
+  print("* A1 = {}".format(agent_name(agent1)))
+  print("* A2 = {}".format(agent_name(agent2)))
   for gi in range(n_game):
     game = Mock4()
     result = game.play(agent1, agent2, p_msg=False, p_res=False)
